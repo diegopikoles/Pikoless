@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Los Pikoles</title>
+<style>
+:root{
+--salmon:#F26A6A;
+--rojo:#E94F64;
+--crema:#FFF7F4;
+--verde:#8FA998;
+--oscuro:#4B4B4B;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+body{background:var(--crema);color:var(--oscuro)}
+header{position:fixed;top:20px;left:50%;transform:translateX(-50%);width:90%;z-index:1000}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:18px 30px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.08)}
+.logo{font-size:2rem;font-weight:700;color:var(--rojo)}
+nav a{margin-left:20px;text-decoration:none;color:var(--oscuro);font-weight:600}
+.page{display:none;min-height:100vh;padding:140px 8% 80px}
+.page.active{display:block}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.hero h1{font-size:4rem;color:var(--rojo)}
+.hero-card{background:white;padding:40px;border-radius:25px;box-shadow:0 8px 25px rgba(0,0,0,.08)}
+.hero-img{height:420px;border-radius:25px;background:linear-gradient(135deg,var(--salmon),var(--verde))}
+.title{text-align:center;margin-bottom:40px;color:var(--rojo);font-size:3rem}
+.cat-buttons{display:flex;justify-content:center;gap:15px;flex-wrap:wrap;margin-bottom:30px}
+.cat-buttons button,.prod-btn{background:var(--verde);color:white;border:none;padding:12px 22px;border-radius:40px;cursor:pointer;font-weight:700}
+.product-list{display:none;background:white;padding:25px;border-radius:20px;margin:20px auto;max-width:900px;box-shadow:0 8px 25px rgba(0,0,0,.08)}
+.product-list.active{display:block}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.prod-btn{width:100%}
+.quality-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px}
+.quality-card,.contact-box{background:rgb(103, 190, 125);padding:30px;border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.08)}
+footer{padding:80px 8%;background:var(--rojo);color:white;text-align:center}
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+justify-content:center;
+align-items:center;
+z-index:3000;
+}
+.modal-box{
+position:relative;
+background:white;
+width:90%;
+max-width:700px;
+border-radius:20px;
+padding:25px;
+padding-top:70px;
+}
+.photo-space{
+height:220px;
+margin-top:50px;
+border:3px dashed #ccc;
+border-radius:15px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.close{
+position:absolute;
+top:15px;
+right:20px;
+font-size:35px;
+font-weight:bold;
+cursor:pointer;
+color:#B22222;
+z-index:99999;
+}
+.hero-banner{
+height:100vh;
+min-height:900px;
+
+margin-left:-8%;
+margin-right:-8%;
+margin-top:-140px;
+
+padding-top:140px;
+
+border-radius:0;
+overflow:hidden;
+
+background:
+linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+url('banner.jpg.png');
+
+background-size:cover;
+background-position:center;
+
+display:flex;
+align-items:center;
+
+margin-bottom:80px;
+}
+
+.hero-overlay{
+width:100%;
+padding:60px;
+}
+
+.hero-content{
+max-width:850px;
+color:white;
+animation:fadeUp 1s ease;
+}
+.hero-tag{
+background:#D9A441;
+padding:10px 20px;
+border-radius:50px;
+font-weight:bold;
+display:inline-block;
+margin-bottom:20px;
+color:white;
+}
+
+.hero-content h1{
+font-size:4rem;
+margin-bottom:20px;
+line-height:1.1;
+}
+
+.hero-content p{
+font-size:1.2rem;
+line-height:1.8;
+margin-bottom:30px;
+}
+
+.hero-buttons{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.hero-btn,
+.hero-btn-secondary{
+padding:15px 30px;
+border-radius:50px;
+text-decoration:none;
+font-weight:bold;
+transition:.3s;
+}
+
+.hero-btn{
+background:#B22222;
+color:white;
+}
+
+.hero-btn-secondary{
+background:white;
+color:#333;
+}
+
+.hero-btn:hover,
+.hero-btn-secondary:hover{
+transform:translateY(-4px);
+}
+
+.about-home{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:50px;
+align-items:center;
+margin-bottom:80px;
+}
+
+.about-image img{
+width:100%;
+height:400px;
+object-fit:cover;
+border-radius:25px;
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+transition:.4s;
+}
+
+.about-image img:hover{
+transform:scale(1.02);
+}
+.about-text h2{
+font-size:2.5rem;
+color:#B22222;
+margin-bottom:20px;
+}
+
+.about-text p{
+line-height:1.8;
+margin-bottom:20px;
+}
+
+.about-features{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin-top:30px;
+}
+
+.feature-card{
+background:white;
+padding:20px;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.stats-section{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+}
+
+.stat-box{
+background:white;
+padding:30px;
+text-align:center;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.stat-box h2{
+font-size:2.5rem;
+color:#B22222;
+margin-bottom:10px;
+}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.hero h1{font-size:2.6rem}}
+.hero-content{
+animation:fadeUp 1s ease;
+}
+
+@keyframes fadeUp{
+
+from{
+opacity:0;
+transform:translateY(40px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+}.category-cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
+margin-top:40px;
+}
+
+.category-card{
+background:white;
+border-radius:25px;
+overflow:hidden;
+cursor:pointer;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+transition:.3s;
+}
+
+.category-card:hover{
+transform:translateY(-8px);
+box-shadow:0 15px 35px rgba(0,0,0,.15);
+}
+
+.category-banner{
+width:100%;
+height:180px;
+object-fit:cover;
+display:block;
+}
+
+.category-card h3{
+padding:20px 20px 5px;
+color:#B22222;
+font-size:1.5rem;
+}
+
+.category-card p{
+padding:0 20px 20px;
+color:#666;
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="navbar">
+<div class="logo">🌶 LOS PIKOLES</div>
+<nav>
+<a href="#" onclick="showPage('inicio')">Inicio</a>
+<a href="#" onclick="showPage('catalogo')">Catálogo</a>
+<a href="#contacto">Contacto</a>
+</nav>
+</div>
+</header>
+
+<section id="inicio" class="page active">
+
+    <div class="hero-banner">
+
+        <div class="hero-overlay">
+
+            <div class="hero-content">
+
+                <span class="hero-tag">
+                    🌶 Chiles • 🌱 Semillas • 🌿 Especias
+                </span>
+
+                <h1>
+                    Distribución Mayorista de
+Chiles, Semillas y Especias
+                </h1>
+
+                <p>
+                    En Los Pikoles nos especializamos en la comercialización de
+                    chiles secos, frijoles, semillas, especias y materias primas
+                    seleccionadas para satisfacer las necesidades de distribuidores,
+                    negocios y fabricantes de alimentos.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#" onclick="showPage('catalogo')" class="hero-btn">
+                        Ver Catálogo
+                    </a>
+
+                    <a href="#contacto" class="hero-btn-secondary">
+                        Contáctanos
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="about-home">
+
+        <div class="about-image">
+
+            <div class="about-image">
+
+    <img src="nosotros.png" alt="Los Pikoles">
+
+</div>
+
+        </div>
+
+        <div class="about-text">
+
+            <h2>¿Quiénes Somos?</h2>
+
+            <p>
+                Somos una empresa dedicada a la comercialización de materias primas
+                para la industria alimentaria, comprometida con la calidad,
+                la atención al cliente y la disponibilidad constante de nuestros productos.
+            </p>
+
+            <p>
+                Trabajamos con proveedores confiables y procesos de selección que permiten
+                ofrecer productos de excelente calidad para distribución nacional.
+            </p>
+
+            <div class="about-features">
+
+                <div class="feature-card">
+                    <h3>✓ Calidad</h3>
+                    <p>Productos seleccionados cuidadosamente.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>✓ Confianza</h3>
+                    <p>Atención personalizada a nuestros clientes.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>✓ Variedad</h3>
+                    <p>Amplio catálogo de productos.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>✓ Disponibilidad</h3>
+                    <p>Suministro constante durante todo el año.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+<div class="location-section">
+
+    <h2>Nuestra Ubicación</h2>
+
+    <p>
+        Nos encontramos en Progreso de Obregón, Hidalgo, ofreciendo atención
+        y distribución a mayoreo de chiles, semillas, especias y otros productos.
+    </p>
+
+    <div class="map-container">
+
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3743.09088471684!2d-99.18779853656505!3d20.25506516439797!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2smx!4v1780718461096!5m2!1ses-419!2smx"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+
+    </div>
+
+    <div class="location-info">
+
+        <div class="feature-card">
+            <h3>📍 Ubicación</h3>
+            <p>Progreso de Obregón, Hidalgo</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🚚 Distribución</h3>
+            <p>Atención a mayoreo</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🌶 Productos</h3>
+            <p>Chiles, semillas y especias</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🤝 Servicio</h3>
+            <p>Atención personalizada</p>
+        </div>
+
+    </div>
+
+</div>
+</section>
+
+<section id="catalogo" class="page">
+<h2 class="title">Catálogo de Productos</h2>
+
+<div class="category-cards">
+
+    <div class="category-card"
+onclick="openCategory('Chiles',[
+'Chile Guajillo',
+'Chile Ancho',
+'Chile Pasilla',
+'Chile de Arbol',
+'Chile Chipotle',
+'Chile Mulato',
+'Chile Cascabel',
+'Chile Morita'
+])">
+
+    <img src="chilesecos.jpeg" class="category-banner">
+
+    <h3>Chiles</h3>
+
+    <p>8 productos disponibles</p>
+
+</div>
+
+    <div class="category-card"
+onclick="openCategory('Frijol',[
+'Frijol Pinto',
+'Frijol Bayo',
+'Frijol Peruano',
+'Frijol Negro',
+'Frijol Flor de Mayo',
+'Frijol Ayocote',
+'Frijol Vaquita',
+'Frijol Sangre de Toro'
+])">
+
+    <img src="frijol.jpg" class="category-banner">
+
+    <h3>Frijol</h3>
+
+    <p>8 productos disponibles</p>
+
+</div>
+
+    <div class="category-card"
+onclick="openCategory('Especias',[
+'Comino',
+'Clavo',
+'Pimiento',
+'Oregano',
+'Canela',
+'Epazote',
+'Laurel'
+])">
+
+    <img src="especias.jpg" class="category-banner">
+
+    <h3>Especias</h3>
+
+    <p>7 productos disponibles</p>
+
+</div>
+
+    <div class="category-card"
+onclick="openCategory('Semillas',[
+'Amaranto',
+'Chia',
+'Semilla de Girasol',
+'Garbanzo',
+'Nuez',
+'Cacahuate',
+'Almendra',
+'Ajonjolí'
+])">
+
+    <img src="semillas.jpg" class="category-banner">
+
+    <h3>Semillas</h3>
+
+    <p>8 productos disponibles</p>
+
+</div>
+
+   <div class="category-card"
+onclick="openCategory('Otros Productos',[
+'Tamarindo',
+'Pan Molido',
+'Tapioca',
+'Arandanos',
+'Avena',
+'Carbonato',
+'Pistache',
+'Avellana',
+'Coco Rayado',
+'Alimento de Pollo'
+])">
+
+    <img src="variados.webp" class="category-banner">
+
+    <h3>Otros Productos</h3>
+
+    <p>10 productos disponibles</p>
+
+</div>
+
+</div>
+<div id="chiles" class="product-list"><div class="product-grid">
+<button class="prod-btn" onclick="openModal('Chile Guajillo')">Chile Guajillo</button>
+<button class="prod-btn" onclick="openModal('Producto 2')">Chile Ancho</button>
+<button class="prod-btn" onclick="openModal('Producto 3')">Chile Pasilla</button>
+<button class="prod-btn" onclick="openModal('Producto 4')">Chile de Arbol</button>
+<button class="prod-btn" onclick="openModal('Producto 5')">Chile Chipotle</button>
+<button class="prod-btn" onclick="openModal('Producto 6')">Chile Mulato</button>
+<button class="prod-btn" onclick="openModal('Producto 7')">Chile Cascabel</button>
+<button class="prod-btn" onclick="openModal('Producto 8')"> Chile Morita</button>
+</div></div>
+
+<div id="frijol" class="product-list"><div class="product-grid">
+<button class="prod-btn" onclick="openModal('Producto 1')">Frijol Pinto</button>
+<button class="prod-btn" onclick="openModal('Producto 2')">Frijol Bayo</button>
+<button class="prod-btn" onclick="openModal('Producto 3')">Frijol Peruano</button>
+<button class="prod-btn" onclick="openModal('Producto 4')">Frijol Negro</button>
+<button class="prod-btn" onclick="openModal('Producto 5')">Frijol Flor de Mayo</button>
+<button class="prod-btn" onclick="openModal('Producto 6')">Frijol Ayocote</button>
+<button class="prod-btn" onclick="openModal('Producto 7')">Frijol Vaquita</button>
+<button class="prod-btn" onclick="openModal('Producto 8')">Frijol Sangre de Toro</button>
+</div></div>
+
+<div id="especias" class="product-list"><div class="product-grid">
+<button class="prod-btn" onclick="openModal('Producto 1')">Comino</button>
+<button class="prod-btn" onclick="openModal('Producto 2')">Clavo</button>
+<button class="prod-btn" onclick="openModal('Producto 3')">Pimiento</button>
+<button class="prod-btn" onclick="openModal('Producto 4')">Oregano</button>
+<button class="prod-btn" onclick="openModal('Producto 5')">Canela</button>
+<button class="prod-btn" onclick="openModal('Producto 6')">Epazote</button>
+<button class="prod-btn" onclick="openModal('Producto 7')">Laurel</button>
+<button class="prod-btn" onclick="openModal('Producto 8')">Epazote</button>
+</div></div>
+
+<div id="semillas" class="product-list"><div class="product-grid">
+<button class="prod-btn" onclick="openModal('Producto 1')">Amaranto </button>
+<button class="prod-btn" onclick="openModal('Producto 2')">Chia</button>
+<button class="prod-btn" onclick="openModal('Producto 3')">Semilla de Girasol</button>
+<button class="prod-btn" onclick="openModal('Producto 4')">Garbanzo</button>
+<button class="prod-btn" onclick="openModal('Producto 5')">Nuez</button>
+<button class="prod-btn" onclick="openModal('Producto 6')">Cacahuate</button>
+<button class="prod-btn" onclick="openModal('Producto 7')">Almendra</button>
+<button class="prod-btn" onclick="openModal('Producto 8')">Ajonjolí</button>
+</div></div>
+
+<div id="otros" class="product-list"><div class="product-grid">
+<button class="prod-btn" onclick="openModal('Producto 1')">Tamarindo</button>
+<button class="prod-btn" onclick="openModal('Producto 2')">Pan Molido</button>
+<button class="prod-btn" onclick="openModal('Producto 3')">Tapioca</button>
+<button class="prod-btn" onclick="openModal('Producto 4')">Arandanos</button>
+<button class="prod-btn" onclick="openModal('Producto 5')">Avena</button>
+<button class="prod-btn" onclick="openModal('Producto 6')">Carbonato</button>
+<button class="prod-btn" onclick="openModal('Producto 7')">Pistache</button>
+<button class="prod-btn" onclick="openModal('Producto 8')">Avellana</button>
+<button class="prod-btn" onclick="openModal('Producto 9')">Coco Rayado</button>
+<button class="prod-btn" onclick="openModal('Producto 10')">Alimento de</button>
+</div></div>
+</section>
+
+
+<footer id="contacto">
+<div class="contact-box">
+<h2>Contacto</h2>
+<p>Teléfono: ____________</p>
+<p>Correo: ____________</p>
+<p>Ubicación: ____________</p>
+</div>
+</footer>
+
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <button onclick="closeModal()" style="position:absolute;top:15px;right:15px;background:red;color:white;width:50px;height:50px;font-size:25px;z-index:99999;">X</button>
+        <h2 id="prodName">Categoría</h2>
+
+        <div class="photo-space">
+            <img id="prodImage"
+            src="placeholder.jpg"
+            style="width:100%;height:100%;object-fit:cover;border-radius:15px;">
+        </div>
+
+        <div id="prodList"></div>
+
+    </div>
+
+</div>
+
+<script>
+function showPage(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+window.scrollTo(0,0);
+}
+function toggleCat(id){
+document.querySelectorAll('.product-list').forEach(x=>{if(x.id!==id)x.classList.remove('active');});
+document.getElementById(id).classList.toggle('active');
+}
+function openModal(name){
+document.getElementById('prodName').innerText=name;
+document.getElementById('modal').style.display='flex';
+}
+function closeModal(){
+document.getElementById('modal').style.display='none';
+}function closeCategoryModal(){
+document.getElementById('categoryModal').style.display='none';
+}
+
+function openCategory(title, products){
+
+document.getElementById('prodName').innerText = title;
+
+const images = {
+
+'Chiles':'chilesecos.jpeg',
+'Frijol':'frijol.jpg',
+'Especias':'especias.jpg',
+'Semillas':'semillas.jpg',
+'Otros Productos':'variados.webp'
+
+};
+
+document.getElementById('prodImage').src =
+images[title] || 'placeholder.jpg';
+
+let html = `
+<ul style="
+font-size:18px;
+padding:0;
+margin-top:20px;
+">
+`;
+
+products.forEach(product=>{
+html += `
+<li style="
+padding:12px;
+margin:8px 0;
+background:#f4f4f4;
+border-radius:10px;
+list-style:none;
+transition:.3s;">
+ ${product}
+</li>
+`;
+});
+
+html += `</ul>`;
+
+document.getElementById('prodList').innerHTML = html;
+
+document.getElementById('modal').style.display='flex';
+
+}
+window.onclick = function(event){
+
+const modal = document.getElementById('modal');
+
+if(event.target === modal){
+modal.style.display = 'none';
+}
+document.addEventListener('keydown', function(event){
+
+if(event.key === 'Escape'){
+document.getElementById('modal').style.display='none';
+}
+
+});
+}
+</script>
+
+
+</div>
+</body>
+</html>
+
